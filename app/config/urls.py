@@ -18,7 +18,10 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
+from . import views
+
 urlpatterns = [
+    path('', views.index),
     path('admin/', admin.site.urls),
     path('posts/', include('posts.urls')),
     # path('media/<str:path>/', 특정view_function),
