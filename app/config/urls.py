@@ -26,7 +26,7 @@ urlpatterns = [
     path('posts/', include('posts.urls')),
     # path('media/<str:path>/', 특정view_function),
 ] + static(
-    prefix='/media/',
+    prefix=settings.MEDIA_URL,
     document_root=settings.MEDIA_ROOT,
     )
 
