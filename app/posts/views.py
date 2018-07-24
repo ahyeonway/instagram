@@ -17,3 +17,4 @@ def post_detail(request, pk):
         'post': post,
     }
     return render(request, 'posts/post_detail.html', context)
+

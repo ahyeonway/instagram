@@ -24,6 +24,7 @@ urlpatterns = [
     path('', views.index),
     path('admin/', admin.site.urls),
     path('posts/', include('posts.urls')),
+    path('members/', include('members.urls')),
     # path('media/<str:path>/', 특정view_function),
 ] + static(
     prefix=settings.MEDIA_URL,
