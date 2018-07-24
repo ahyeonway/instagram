@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 
 
@@ -24,3 +24,9 @@ def login_view(request):
     else:
         # form이 있는 template을 보여준다
         return render(request, 'members/login.html')
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('index')
+
