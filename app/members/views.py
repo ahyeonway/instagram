@@ -1,5 +1,9 @@
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.shortcuts import render, redirect
+
+# User클래스 자체를 가져올때는 get_user_model()
+# ForeignKey에 User모델을 지정할때는 settings.AUTH_USER_MODEL
+User = get_user_model()
 
 
 def login_view(request):
@@ -29,4 +33,21 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('index')
+
+
+def signup(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        # exists를 사용해서 유저가 이미 존재하면 signup으로 다시 redirect
+        if User.objects.filter(username=username).exists():
+            return redirect('members:signup')
+        # 존재하지 않는 경우에만 아래 로직 실행
+        user = User.objects.created_user(
+            username=username,
+            password=password,
+        )
+        login(request, user)
+        return redirect('index')
+    return render(request, 'members/signup.html')
 
