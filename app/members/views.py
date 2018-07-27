@@ -36,18 +36,66 @@ def logout_view(request):
 
 
 def signup(request):
+    context = {
+        'errors': [],
+    }
     if request.method == 'POST':
+        # 입력되지 않은 필드에 대한 오류를 추가
         username = request.POST['username']
         password = request.POST['password']
-        # exists를 사용해서 유저가 이미 존재하면 signup으로 다시 redirect
+        password2 = request.POST['password2']
+        email = request.POST['email']
+
+        # print(locals())
+        # 반드시 내용이 채워져야 하는 form의 필드 (위 변수명)
+
+        # required_fields = ['username', 'email', 'password', 'password2']
+        # for field_name in required_fields:
+        #     print('field_name:', field_name)
+        #     print('locals().[field_name]:', locals()[field_name])
+        #     if not locals()[field_name]:
+        #         context['errors'].append('{}를(을) 채워주세요'.format(field_name))
+
+        required_fields = {
+            'username': {
+                'verbose_name': '아이디',
+            },
+            'email': {
+                'verbose_name': '이메일',
+            },
+            'password': {
+                'verbose_name': '비밀번호',
+            },
+            'password2': {
+                'verbose_name': '비밀번호 확인',
+            }
+        }
+        for field_name in required_fields.keys():
+            if not locals()[field_name]:
+                context['errors'].append('{}를(을) 채워주세요'.format(field_name))
+
+
+        # 입력데이터 채워넣기
+        context['username'] = username
+        context['email'] = email
+
+        # form에서 전송한 데이터들이 올바른지 검사
         if User.objects.filter(username=username).exists():
-            return redirect('members:signup')
-        # 존재하지 않는 경우에만 아래 로직 실행
-        user = User.objects.created_user(
-            username=username,
-            password=password,
-        )
-        login(request, user)
-        return redirect('index')
-    return render(request, 'members/signup.html')
+            context['errors'].append('유저가 이미 존재함')
+        # password, password2를 검사
+        if password != password2:
+            context['errors'].append('비밀번호가 일치하지 않음')
+        # errors가 존재하면 render
+
+
+        if not context['errors']:
+            user = User.objects.created_user(
+                username=username,
+                password=password,
+            )
+            login(request, user)
+            return redirect('index')
+
+    return render(request, 'members/signup.html', context)
+
 
